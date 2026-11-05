@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>عبايات بيست | المتجر التدريبي</title>
+</head>
+
+<body>
+
+  <header>
+    <h1>عبايات بيست</h1>
+    <p>متجرنا التدريبي لتعلم التتبع والتحليل</p>
+    <p>عدد المنتجات في السلة: <span id="cart-count">0</span></p>
+  </header>
+
+  <main>
+    <section>
+      <h2>منتجاتنا</h2>
+
+      <div class="product">
+        <h3>عباية كلاسيكية سوداء</h3>
+        <p>السعر: 150 ريال</p>
+        <button onclick="addToCart()">
+          أضف إلى السلة
+        </button>
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    let cartCount = 0;
+
+    function addToCart() {
+      cartCount++;
+      document.getElementById("cart-count").textContent = cartCount;
+    }
+  </script>
+
+</body>
+</html>
