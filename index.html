@@ -20,17 +20,24 @@
       f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-MVGC734L');
 
-    const cleanPageUrl = new URL(window.location.href);
-    cleanPageUrl.searchParams.delete('gtm_debug');
-    cleanPageUrl.searchParams.delete('gtm_preview');
-    cleanPageUrl.searchParams.delete('gtm_auth');
+    /*
+      Page View:
+      نرسل الحدث بعد اكتمال بناء DOM لضمان توفر عنوان الصفحة وبياناتها.
+      هذا المتجر صفحة واحدة؛ فتح تفاصيل المنتج لا ينشئ page_view جديداً.
+    */
+    window.addEventListener('DOMContentLoaded', function () {
+      const cleanPageUrl = new URL(window.location.href);
+      cleanPageUrl.searchParams.delete('gtm_debug');
+      cleanPageUrl.searchParams.delete('gtm_preview');
+      cleanPageUrl.searchParams.delete('gtm_auth');
 
-    window.dataLayer.push({
-      event: 'page_view',
-      page_title: document.title,
-      page_location: cleanPageUrl.toString(),
-      page_referrer: document.referrer
-    });
+      window.dataLayer.push({
+        event: 'page_view',
+        page_title: document.title,
+        page_location: cleanPageUrl.toString(),
+        page_referrer: document.referrer
+      });
+    }, { once: true });
   </script>
   <!-- End Google Tag Manager -->
 
@@ -310,6 +317,7 @@
       </div>
     </div>
 
+    <!-- Product details -->
     <section class="panel" id="product-details">
       <div class="detail-layout">
         <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=800&q=85" alt="العباية الكلاسيكية السوداء">
@@ -332,6 +340,7 @@
       </div>
     </section>
 
+    <!-- Cart -->
     <section class="panel" id="cart">
       <div class="eyebrow">YOUR SHOPPING BAG</div>
       <h2>سلة التسوق</h2>
@@ -344,6 +353,7 @@
       <button class="secondary" onclick="closePanels()">متابعة التسوق</button>
     </section>
 
+    <!-- Checkout -->
     <section class="panel" id="checkout">
       <div class="eyebrow">CHECKOUT</div>
       <h2>إتمام الطلب</h2>
@@ -359,6 +369,7 @@
       <button class="primary" onclick="goToPayment()">المتابعة إلى الدفع</button>
     </section>
 
+    <!-- Payment and simulated order completion -->
     <section class="panel" id="payment">
       <div class="eyebrow">PAYMENT INFORMATION</div>
       <h2>اختاري طريقة الدفع</h2>
@@ -430,6 +441,7 @@
     function sendEvent(eventName, parameters = {}) {
       window.dataLayer = window.dataLayer || [];
 
+      // تنظيف كائن التجارة الإلكترونية السابق حتى لا تتسرب بياناته إلى الحدث التالي.
       if (parameters.ecommerce) {
         window.dataLayer.push({ ecommerce: null });
       }
@@ -473,6 +485,7 @@
       document.getElementById("products").scrollIntoView({ behavior:"smooth" });
     }
 
+    // View Item
     function viewProduct() {
       selectedSize = document.getElementById("size").value;
 
@@ -490,6 +503,7 @@
       showPanel("product-details");
     }
 
+    // Add To Cart
     function addToCart() {
       selectedSize = document.getElementById("size").value;
       cartCount += 1;
@@ -519,6 +533,7 @@
       document.getElementById("payment-total").textContent = cartValue;
     }
 
+    // Begin Checkout
     function startCheckout() {
       if (cartCount < 1) {
         alert("السلة فارغة");
@@ -532,6 +547,7 @@
       showPanel("checkout");
     }
 
+    // Continue to payment
     function goToPayment() {
       const name = document.getElementById("customer-name").value.trim();
       const phone = document.getElementById("customer-phone").value.trim();
@@ -544,6 +560,7 @@
       showPanel("payment");
     }
 
+    // Add Payment Info
     function submitPaymentInfo() {
       if (paymentInfoSent) return;
 
@@ -574,12 +591,14 @@
         "تم تسجيل معلومات الدفع التجريبية. اضغطي الآن على «إتمام الطلب التجريبي» لإرسال حدث Purchase.";
     }
 
+    // Purchase: لا يرسل الحدث إلا بعد ضغط زر إتمام الطلب التجريبي.
     function completeOrder() {
       if (!paymentInfoSent) {
         alert("أكدي طريقة الدفع أولاً.");
         return;
       }
 
+      // حماية من الضغط المتكرر وإرسال Purchase أكثر من مرة لنفس الطلب.
       if (purchaseSent) return;
       purchaseSent = true;
 
